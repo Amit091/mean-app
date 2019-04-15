@@ -3,6 +3,29 @@ const jwt = require("jsonwebtoken");
 const User = require("./../models/User");
 const globalVar = require('./globalVariable');
 const tokentxt = globalVar.JWT_KEY;
+
+exports.getAllUser =  (req, res, next) => {
+  const userQuery = User.find();
+  let fetchedUsers;
+  console.log('Getting all the users');
+  userQuery.find()
+    .then(users => {
+      fetchedUsers = users;
+      return User.count();
+    }).then(count => {
+      res.status(200).json({
+        message: "Data Fetch form server",
+        posts: fetchedUsers,
+        maxPost: count
+      });
+    })
+    .catch(err => {
+     res.status(500).json({
+       message:'Error while fetching server data'
+     });
+    });
+};
+
 exports.createUser = (req, res, next) => {
   User.findOne({email: req.body.email})
   .then(userExist=>{
